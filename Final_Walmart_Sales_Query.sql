@@ -1,0 +1,58 @@
+-- BRANCH PERFORMANCE ANALYSIS 
+-- 1) Identify the Branch with the Lowest Sales
+SELECT 
+  BRANCH, 
+  SUM(COGS) AS TOTAL_SALES 
+FROM 
+  SALES 
+GROUP BY 
+  BRANCH 
+ORDER BY 
+  TOTAL_SALES DESC;
+-- 2) Product Line Performance in the Lowest Sales Branch- 
+--a) Average Sales of Each Product Line in All Branches
+SELECT 
+  PRODUCT_LINE, 
+  AVG(COGS) AS AVG_SALES 
+FROM 
+  SALES 
+GROUP BY 
+  PRODUCT_LINE 
+-- b)CALCULATE SALES OF BRANCH B
+SELECT 
+  PRODUCT_LINE, 
+  AVG(COGS) AS AVG_SALES_B 
+FROM 
+  SALES 
+WHERE 
+  BRANCH = 'B' 
+GROUP BY 
+  PRODUCT_LINE 
+-- c) Compare Sales in 'Branch B' with Average Sales
+SELECT 
+  PRODUCT_LINE, 
+  AVG_SALES_B, 
+  AVG_SALES_ABC 
+FROM 
+  (
+    SELECT 
+      PRODUCT_LINE, 
+      AVG(COGS) AS AVG_SALES_B 
+    FROM 
+      SALES 
+    WHERE 
+      BRANCH = 'B' 
+    GROUP BY 
+      PRODUCT_LINE
+  ) ASB 
+  JOIN (
+    SELECT 
+      PRODUCT_LINE, 
+      AVG(COGS) AS AVG_SALES_ABC 
+    FROM 
+      SALES 
+    GROUP BY 
+      PRODUCT_LINE
+  ) ASABC ON ASB.PRODUCT_LINE = ASABC.PRODUCT_LINE 
+ORDER BY 
+  PRODUCT_LINE
